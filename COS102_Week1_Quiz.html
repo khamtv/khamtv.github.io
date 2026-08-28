@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COS102 — Week 1 Quiz: The Australian Welfare State</title>
+<style>
+  :root{
+    --ink:#152238;
+    --ink-2:#1f3454;
+    --paper:#EFEAE0;
+    --paper-2:#F8F5EE;
+    --gold:#9C7A2E;
+    --gold-light:#C9A24B;
+    --green:#3F6B4A;
+    --red:#9B3B3B;
+    --line: rgba(21,34,56,0.14);
+    --serif: "Source Serif Pro", "Georgia", serif;
+    --sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+    --mono: "IBM Plex Mono", monospace;
+  }
+
+  @font-face{
+    font-family:"Source Serif Pro";
+    src: local("Source Serif Pro");
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--ink);
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(201,162,75,0.10), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(201,162,75,0.06), transparent 45%);
+    color: var(--ink);
+    font-family: var(--sans);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding: 40px 16px 80px;
+  }
+
+  .sheet{
+    width:100%;
+    max-width: 760px;
+  }
+
+  /* Header — styled like a gazette masthead */
+  .masthead{
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-top: 6px solid var(--gold);
+    padding: 28px 32px 22px;
+    position:relative;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+  }
+  .masthead::after{
+    content:"";
+    position:absolute;
+    left:32px; right:32px; bottom:14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .eyebrow{
+    font-family: var(--mono);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 11.5px;
+    color: var(--gold);
+    display:flex;
+    justify-content:space-between;
+    margin-bottom: 10px;
+  }
+  h1{
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(26px, 4vw, 34px);
+    margin: 0 0 6px;
+    color: var(--ink);
+    line-height:1.15;
+  }
+  .subtitle{
+    font-size: 14.5px;
+    color: #4b5a72;
+    margin: 0 0 18px;
+  }
+
+  .progress-row{
+    display:flex;
+    align-items:center;
+    gap: 14px;
+    margin-top: 18px;
+  }
+  .progress-track{
+    flex:1;
+    height: 6px;
+    background: var(--line);
+    border-radius: 3px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background: linear-gradient(90deg, var(--gold-light), var(--gold));
+    width: 10%;
+    transition: width .35s ease;
+  }
+  .progress-label{
+    font-family: var(--mono);
+    font-size: 12px;
+    color:#4b5a72;
+    white-space:nowrap;
+  }
+
+  /* Card */
+  .card{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 30px 32px 26px;
+    margin-top: 2px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+  }
+
+  .tier{
+    display:inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    background: rgba(21,34,56,0.06);
+    border: 1px solid var(--line);
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+
+  .q-number{
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .q-text{
+    font-family: var(--serif);
+    font-size: 20px;
+    line-height: 1.45;
+    color: var(--ink);
+    margin: 0 0 22px;
+  }
+
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+  }
+
+  .option{
+    display:flex;
+    align-items:flex-start;
+    gap: 12px;
+    text-align:left;
+    width:100%;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    padding: 14px 16px;
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height:1.45;
+    color: var(--ink);
+    cursor:pointer;
+    transition: border-color .15s ease, background .15s ease, transform .1s ease;
+  }
+  .option:hover:not(.locked){
+    border-color: var(--gold);
+    background: #fbf9f3;
+  }
+  .option:active:not(.locked){ transform: translateY(1px); }
+
+  .option .letter{
+    font-family: var(--mono);
+    font-weight: 600;
+    color: var(--gold);
+    flex-shrink:0;
+    width: 18px;
+  }
+
+  .option.correct{
+    border-color: var(--green);
+    background: rgba(63,107,74,0.10);
+  }
+  .option.correct .letter{ color: var(--green); }
+
+  .option.incorrect{
+    border-color: var(--red);
+    background: rgba(155,59,59,0.08);
+  }
+  .option.incorrect .letter{ color: var(--red); }
+
+  .option.locked{ cursor:default; }
+  .option.dim{ opacity:0.55; }
+
+  .feedback{
+    margin-top: 18px;
+    padding: 16px 18px;
+    border-left: 3px solid var(--gold);
+    background: var(--paper-2);
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: #2c3b52;
+    display:none;
+  }
+  .feedback.show{ display:block; }
+  .feedback strong{
+    font-family: var(--serif);
+    color: var(--ink);
+  }
+  .feedback.wrong{ border-left-color: var(--red); }
+  .feedback.right{ border-left-color: var(--green); }
+
+  .nav-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top: 26px;
+  }
+
+  button.nav-btn{
+    font-family: var(--sans);
+    font-size: 13.5px;
+    letter-spacing: 0.02em;
+    padding: 11px 22px;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper-2);
+    cursor:pointer;
+    transition: background .15s ease, opacity .15s ease;
+  }
+  button.nav-btn:hover:not(:disabled){ background: var(--ink-2); }
+  button.nav-btn:disabled{ opacity:0.35; cursor:not-allowed; }
+  button.nav-btn.ghost{
+    background:transparent;
+    color: var(--ink);
+    border-color: var(--line);
+  }
+  button.nav-btn.ghost:hover:not(:disabled){ border-color: var(--ink); }
+
+  .score-chip{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink-2);
+  }
+
+  /* Results screen */
+  .results{
+    display:none;
+    text-align:center;
+    padding: 20px 0 6px;
+  }
+  .results.show{ display:block; }
+  .results .big-score{
+    font-family: var(--serif);
+    font-size: 56px;
+    color: var(--ink);
+    margin: 6px 0 0;
+    font-weight:600;
+  }
+  .results .big-score span{ color: var(--gold); }
+  .results .score-caption{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:#4b5a72;
+    margin-bottom: 4px;
+  }
+  .results .verdict{
+    font-size: 15px;
+    color: #2c3b52;
+    margin: 18px auto 26px;
+    max-width: 480px;
+    line-height:1.6;
+  }
+  .results-actions{
+    display:flex;
+    gap: 12px;
+    justify-content:center;
+  }
+
+  .quiz-body{ display:block; }
+  .quiz-body.hide{ display:none; }
+
+  footer.note{
+    text-align:center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: rgba(239,234,224,0.45);
+    margin-top: 22px;
+    letter-spacing: 0.04em;
+  }
+
+  @media (max-width: 480px){
+    .masthead, .card{ padding: 22px 18px; }
+    .q-text{ font-size: 18px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <div class="masthead">
+    <div class="eyebrow">
+      <span>COS102 · Community Services</span>
+      <span id="tier-label">Foundational</span>
+    </div>
+    <h1>Week 1 Quiz Review</h1>
+    <p class="subtitle">The Australian Welfare State — models, history, and current policy tensions.</p>
+    <div class="progress-row">
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="progress-label" id="progress-label">Q1 / 10</div>
+    </div>
+  </div>
+
+  <div class="card">
+
+    <div class="quiz-body" id="quiz-body">
+      <div class="tier" id="tier-tag">Foundational</div>
+      <div class="q-number" id="q-number">Question 1</div>
+      <p class="q-text" id="q-text"></p>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+
+      <div class="nav-row">
+        <button class="nav-btn ghost" id="prev-btn">← Previous</button>
+        <span class="score-chip" id="score-chip">Score: 0 / 0 answered</span>
+        <button class="nav-btn" id="next-btn" disabled>Next →</button>
+      </div>
+    </div>
+
+    <div class="results" id="results">
+      <div class="score-caption">Final Result</div>
+      <p class="big-score"><span id="results-score">0</span>/10</p>
+      <p class="verdict" id="results-verdict"></p>
+      <div class="results-actions">
+        <button class="nav-btn ghost" id="review-btn">Review answers</button>
+        <button class="nav-btn" id="restart-btn">Retake quiz</button>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="note">COS102 · WEEK 1 PRACTICE SET · 10 QUESTIONS</footer>
+</div>
+
+<script>
+const questions = [
+  {
+    tier: "Foundational",
+    q: "How does the Australian Institute of Health and Welfare (AIHW) formally define \u201cwelfare\u201d in the Australian context?",
+    options: [
+      "A system where social support is solely delivered by the state to meet basic universal needs.",
+      "A complex network of government payments, welfare-related tax concessions, and welfare services.",
+      "An informal network of voluntary charities operating independently of the government.",
+      "A temporary cash-only assistance program designed to discourage long-term dependency."
+    ],
+    correct: 1,
+    explanation: "The AIHW defines Australian welfare as a complex network that integrates direct government payments, tax concessions, and essential services to support those in need."
+  },
+  {
+    tier: "Foundational",
+    q: "Which of the following is the best example of \u201cinstitutional support\u201d (prevention-focused) in a welfare system?",
+    options: [
+      "Immediate cash assistance during a natural disaster.",
+      "Emergency food and housing vouchers provided during a personal crisis.",
+      "A national Social Security program that provides ongoing, structural support as a citizen entitlement.",
+      "Private philanthropic donations targeted at specific localized issues."
+    ],
+    correct: 2,
+    explanation: "Institutional support is prevention-focused (such as Social Security), whereas residual support is reactive (such as emergency cash assistance)."
+  },
+  {
+    tier: "Foundational",
+    q: "What major constitutional milestone occurred on January 1, 1901, and how did it affect service provision in Australia?",
+    options: [
+      "Federation was achieved, creating the Commonwealth of Australia and dividing power between federal and state governments.",
+      "The Franchise Act was passed, which immediately granted voting rights to all residents regardless of race or gender.",
+      "The Invalid and Old-age Pensions Act was passed, introducing Australia\u2019s first state-run public housing model.",
+      "The Menzies government was established, centralizing all community service delivery under local councils."
+    ],
+    correct: 0,
+    explanation: "On January 1, 1901, Federation was achieved, establishing the Commonwealth of Australia and dividing administrative power between the federal government (national matters) and state governments (local matters)."
+  },
+  {
+    tier: "Foundational",
+    q: "Which of the following are major arguments or concerns raised by critics regarding the disadvantages of a welfare state?",
+    options: [
+      "It decreases overall tax rates for citizens and minimizes governmental oversight.",
+      "It prevents people from falling into poverty traps and reduces local criminal rates.",
+      "It leads to higher tax rates, significant governmental expenditure, and potential concerns of fostering welfare dependency.",
+      "It completely relies on private markets, leaving no social safety net for vulnerable citizens."
+    ],
+    correct: 2,
+    explanation: "While the welfare state aims to prevent social hardship, its recognized disadvantages include higher tax rates, massive government expenditure, and policy concerns around long-term benefit dependency."
+  },
+  {
+    tier: "Upper-Intermediate",
+    q: "What is the defining characteristic of a \u201cmixed economy of welfare\u201d?",
+    options: [
+      "A system where welfare services are solely funded and delivered by private corporations.",
+      "A system where welfare provision involves contributions from multiple sectors including the state, market, voluntary, and informal sectors.",
+      "A state model that operates entirely on automated digital decisions with zero voluntary involvement.",
+      "A welfare structure where only local councils have the power to raise income taxes and distribute benefits."
+    ],
+    correct: 1,
+    explanation: "A mixed economy of welfare means social protection is not a government monopoly; it is a combined effort involving the state, market, voluntary organizations, and informal support networks."
+  },
+  {
+    tier: "Upper-Intermediate",
+    q: "In Australian welfare history, which social reform was introduced in 1947 by the Menzies government?",
+    options: [
+      "The old-age pension under the Invalid and Old-age Pensions Act.",
+      "Universal healthcare, representing a significant social and political reform.",
+      "The constitutional amendment granting full citizenship rights to Indigenous Australians.",
+      "The National Disability Insurance Scheme (NDIS)."
+    ],
+    correct: 1,
+    explanation: "The Menzies government introduced universal healthcare in 1947, marking a monumental step in the expansion of the Australian welfare state."
+  },
+  {
+    tier: "Upper-Intermediate",
+    q: "How does a \u201cliberal welfare state\u201d model (such as Australia's) seek to balance social assistance?",
+    options: [
+      "By providing 100% free, non-means-tested services to every citizen without any eligibility requirements.",
+      "By relying entirely on individual self-funding without any government safety nets.",
+      "By encouraging individual responsibility and workforce participation while providing targeted, means-tested support for those unable to support themselves.",
+      "By penalizing private savings to ensure that all citizens are equally dependent on state benefits."
+    ],
+    correct: 2,
+    explanation: "A liberal welfare state emphasizes individual responsibility and self-sufficiency but maintains a crucial safety net of targeted, means-tested support (such as JobSeeker payments) to prevent extreme hardship."
+  },
+  {
+    tier: "Advanced",
+    q: "What is the primary difference in approach between a \u201cProtective State\u201d and an \u201cEnabling State\u201d regarding community services?",
+    options: [
+      "A protective state focuses on local environmental safety, while an enabling state focuses on national defense.",
+      "A protective state focuses on providing a basic safety net (income, housing, healthcare) for those in need, whereas an enabling state focuses on empowering individuals through capability building, training, and education.",
+      "A protective state mandates universal private health insurance, whereas an enabling state makes all medical services state-owned.",
+      "A protective state operates purely through voluntary non-governmental organizations, while an enabling state operates exclusively through state-run departments."
+    ],
+    correct: 1,
+    explanation: "The protective state acts as a reactive shield, ensuring basic needs (income support, public housing) are met. The enabling state acts as a platform, empowering individuals to build the skills and capabilities needed to regain control of their lives and actively participate in the community."
+  },
+  {
+    tier: "Advanced",
+    q: "Why is \u201cfiscal sustainability\u201d characterized as a constant balancing act for welfare state policymakers?",
+    options: [
+      "It requires the complete abolition of state-based taxes in favor of federal funding.",
+      "It requires balancing the provision of adequate benefits and services against the long-term economic sustainability of the system.",
+      "It prevents the state from forming public-private partnerships with non-governmental sectors.",
+      "It relies entirely on the fluctuating revenue generated by local council property rates."
+    ],
+    correct: 1,
+    explanation: "Fiscal sustainability is a critical, ongoing policy challenge because governments must carefully weigh their obligation to protect vulnerable populations against the economic capacity and tax burdens of the broader system."
+  },
+  {
+    tier: "Advanced",
+    q: "Under the human-rights-focused objectives of the \u201cdigitalized welfare state,\u201d what is required to ensure \u201cequality\u201d and \u201centitlement\u201d?",
+    options: [
+      "Ensuring that all citizens migrate to automated, paperless self-service centers without human support.",
+      "Restricting financial assistance only to tech-literate families to encourage digital progress.",
+      "Ensuring that technology centers on human needs, safeguards vulnerable groups against harmful automated profiling, and guarantees avenues of redress.",
+      "Transferring all data security responsibilities to private international marketing firms."
+    ],
+    correct: 2,
+    explanation: "As welfare states transition to digitalized systems, key legal and ethical strategies focus on protecting vulnerable groups from automated systems that might surveil, penalize, or stigmatize them, and ensuring technology designs remain human-centered."
+  }
+];
+
+let current = 0;
+let answers = new Array(questions.length).fill(null); // stores chosen index or null
+let answeredCount = 0;
+let correctCount = 0;
+
+const qNumberEl = document.getElementById('q-number');
+const qTextEl = document.getElementById('q-text');
+const optionsEl = document.getElementById('options');
+const feedbackEl = document.getElementById('feedback');
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
+const progressFill = document.getElementById('progress-fill');
+const progressLabel = document.getElementById('progress-label');
+const scoreChip = document.getElementById('score-chip');
+const tierTag = document.getElementById('tier-tag');
+const tierLabel = document.getElementById('tier-label');
+const quizBody = document.getElementById('quiz-body');
+const resultsEl = document.getElementById('results');
+const resultsScore = document.getElementById('results-score');
+const resultsVerdict = document.getElementById('results-verdict');
+
+const letters = ['A','B','C','D'];
+
+function renderQuestion(i){
+  const item = questions[i];
+  qNumberEl.textContent = `Question ${i+1}`;
+  tierTag.textContent = item.tier;
+  tierLabel.textContent = item.tier;
+  qTextEl.textContent = item.q;
+  optionsEl.innerHTML = '';
+  feedbackEl.className = 'feedback';
+  feedbackEl.innerHTML = '';
+
+  const chosen = answers[i];
+  const locked = chosen !== null;
+
+  item.options.forEach((optText, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option' + (locked ? ' locked' : '');
+    btn.innerHTML = `<span class="letter">${letters[idx]}</span><span>${optText}</span>`;
+
+    if(locked){
+      if(idx === item.correct) btn.classList.add('correct');
+      if(idx === chosen && chosen !== item.correct) btn.classList.add('incorrect');
+      if(idx !== item.correct && idx !== chosen) btn.classList.add('dim');
+    }
+
+    btn.addEventListener('click', () => {
+      if(answers[i] !== null) return;
+      selectAnswer(i, idx);
+    });
+
+    optionsEl.appendChild(btn);
+  });
+
+  if(locked){
+    showFeedback(item, chosen);
+  }
+
+  updateProgress();
+  updateNavButtons();
+}
+
+function selectAnswer(i, idx){
+  answers[i] = idx;
+  answeredCount++;
+  if(idx === questions[i].correct) correctCount++;
+  renderQuestion(i);
+}
+
+function showFeedback(item, chosen){
+  const isRight = chosen === item.correct;
+  feedbackEl.classList.add('show', isRight ? 'right' : 'wrong');
+  feedbackEl.innerHTML = `<strong>${isRight ? 'Correct.' : 'Not quite.'}</strong> ${item.explanation}`;
+}
+
+function updateProgress(){
+  const pct = ((current+1) / questions.length) * 100;
+  progressFill.style.width = pct + '%';
+  progressLabel.textContent = `Q${current+1} / ${questions.length}`;
+  scoreChip.textContent = `Score: ${correctCount} / ${answeredCount} answered`;
+}
+
+function updateNavButtons(){
+  prevBtn.disabled = current === 0;
+  const answered = answers[current] !== null;
+  nextBtn.disabled = !answered;
+  nextBtn.textContent = current === questions.length - 1 ? 'See results →' : 'Next →';
+}
+
+prevBtn.addEventListener('click', () => {
+  if(current > 0){ current--; renderQuestion(current); }
+});
+
+nextBtn.addEventListener('click', () => {
+  if(current < questions.length - 1){
+    current++;
+    renderQuestion(current);
+  } else {
+    showResults();
+  }
+});
+
+function showResults(){
+  quizBody.classList.add('hide');
+  resultsEl.classList.add('show');
+  resultsScore.textContent = correctCount;
+
+  let verdict;
+  if(correctCount === 10){
+    verdict = "Full marks. You've got a solid command of Australia's welfare models, history, and current policy debates — ready for Week 2.";
+  } else if(correctCount >= 8){
+    verdict = "Strong result. Revisit the questions you missed to lock in the finer distinctions between welfare models.";
+  } else if(correctCount >= 5){
+    verdict = "Solid foundation, with some gaps. Re-read the sections on institutional vs. residual support and the protective vs. enabling state before the tutorial.";
+  } else {
+    verdict = "Worth another pass through the Week 1 readings — focus especially on the AIHW definition of welfare and the liberal welfare state model.";
+  }
+  resultsVerdict.textContent = verdict;
+}
+
+document.getElementById('restart-btn').addEventListener('click', () => {
+  current = 0;
+  answers = new Array(questions.length).fill(null);
+  answeredCount = 0;
+  correctCount = 0;
+  resultsEl.classList.remove('show');
+  quizBody.classList.remove('hide');
+  renderQuestion(0);
+});
+
+document.getElementById('review-btn').addEventListener('click', () => {
+  current = 0;
+  resultsEl.classList.remove('show');
+  quizBody.classList.remove('hide');
+  renderQuestion(0);
+});
+
+renderQuestion(0);
+</script>
+
+</body>
+</html>
