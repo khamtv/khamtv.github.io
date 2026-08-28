@@ -1,1 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Assess your modifiable lifestyle and health factors associated with dementia risk. Evidence-based, transparent, and educational.">
+  <title>Dementia Risk &amp; Cognitive Health Assessment</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+  <style>
+    .lang-selector { margin-left: 15px; }
+    .lang-selector select { 
+      background: rgba(255,255,255,0.1); color: #fff; 
+      border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; 
+      padding: 4px 8px; font-size: 13px; cursor: pointer;
+    }
+    .lang-selector select option { background: #06080f; color: #fff; }
+  </style>
+</head>
+<body>
 
+<header class="app-header">
+  <div class="app-logo">
+    <div class="app-logo-icon">🧠</div>
+    <div class="app-logo-text"><span>CogniRisk</span></div>
+  </div>
+  <div class="progress-container" id="progressContainer" style="display:none;">
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <div class="progress-label" id="progressLabel">Step 1 of 9</div>
+  </div>
+  <div class="lang-selector">
+    <select id="langSelect" onchange="window.DementiaApp.i18n.setLocale(this.value)">
+      <option value="en">English</option>
+      <option value="es">Español</option>
+      <option value="vi">Tiếng Việt</option>
+      <option value="fr">Français</option>
+      <option value="zh">中文</option>
+    </select>
+  </div>
+</header>
+
+<main>
+  <!-- Welcome -->
+  <section class="screen active" id="screen-welcome">
+    <div class="welcome-hero">
+      <div class="welcome-icon">🧠</div>
+      <h1 data-i18n="Dementia Risk & Cognitive Health">Dementia Risk &amp; Cognitive Health</h1>
+      <p class="subtitle" data-i18n="Understand your modifiable lifestyle and health factors through an evidence-based, transparent assessment grounded in the latest research.">Understand your modifiable lifestyle and health factors through an evidence-based, transparent assessment grounded in the latest research.</p>
+    </div>
+
+    <div class="disclaimer-box">
+      <div class="disclaimer-title">⚠️ <span data-i18n="Important Notice">Important Notice</span></div>
+      <p id="disclaimerText"></p>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="icon">📊</div>
+        <h3 data-i18n="Evidence-Based">Evidence-Based</h3>
+        <p data-i18n="Built on peer-reviewed research from Nature Reviews Psychology & the Lancet Commission">Built on peer-reviewed research from Nature Reviews Psychology &amp; the Lancet Commission</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🔍</div>
+        <h3 data-i18n="Transparent Scoring">Transparent Scoring</h3>
+        <p data-i18n="Every factor shows its evidence strength — no black-box algorithms">Every factor shows its evidence strength — no black-box algorithms</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🎯</div>
+        <h3 data-i18n="Actionable Insights">Actionable Insights</h3>
+        <p data-i18n="Personalised recommendations mapped to real intervention evidence">Personalised recommendations mapped to real intervention evidence</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🔒</div>
+        <h3 data-i18n="Private & Secure">Private &amp; Secure</h3>
+        <p data-i18n="All data stays in your browser — nothing is sent to any server">All data stays in your browser — nothing is sent to any server</p>
+      </div>
+    </div>
+
+    <div class="btn-row" style="justify-content:center;">
+      <button class="btn btn-primary btn-large" onclick="App.startAssessment()" data-i18n="Begin Assessment →">
+        Begin Assessment →
+      </button>
+    </div>
+  </section>
+
+  <!-- Dynamic module screens rendered by JS -->
+  <section class="screen" id="screen-module">
+    <div id="moduleContent"></div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="btnBack" onclick="App.prevModule()" data-i18n="← Back">← Back</button>
+      <button class="btn btn-secondary" id="btnSkip" onclick="App.skipModule()" data-i18n="Skip Module">Skip Module</button>
+      <button class="btn btn-primary" id="btnNext" onclick="App.nextModule()" data-i18n="Continue →">Continue →</button>
+    </div>
+  </section>
+
+  <!-- Report -->
+  <section class="screen" id="screen-report">
+    <div id="reportContent"></div>
+    <div class="btn-row" style="justify-content:center; margin-top:32px;">
+      <button class="btn btn-secondary" onclick="App.restartAssessment()" data-i18n="↺ Start Over">↺ Start Over</button>
+      <button class="btn btn-primary" onclick="App.exportPDF()" data-i18n="📄 Export Summary">📄 Export Summary</button>
+    </div>
+  </section>
+</main>
+
+<script src="js/i18n.js"></script>
+<script src="js/config.js"></script>
+<script src="js/modules.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/recommendations.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
